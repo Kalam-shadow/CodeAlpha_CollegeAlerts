@@ -1,5 +1,6 @@
 package com.example.collegealerts.uiux
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -10,6 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.collegealerts.data.Event
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import com.google.firebase.database.FirebaseDatabase
 import java.util.*
 
@@ -24,19 +28,27 @@ fun AddEventScreen(navController: NavController) {
 
     Column(
         modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
             .padding(16.dp)
     ) {
         Text(
             "Create New Event",
-            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.headlineSmall.copy(
+                fontStyle = FontStyle.Italic
+            ),
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            elevation = CardDefaults.cardElevation(4.dp)
+            elevation = CardDefaults.cardElevation(4.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 OutlinedTextField(
@@ -74,9 +86,9 @@ fun AddEventScreen(navController: NavController) {
                             onClick = { category = cat },
                             label = { Text(cat) },
                             colors = AssistChipDefaults.assistChipColors(
-                                containerColor = if (category == cat) MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                                containerColor = if (category == cat) MaterialTheme.colorScheme.secondaryContainer
                                 else MaterialTheme.colorScheme.surface,
-                                labelColor = if (category == cat) MaterialTheme.colorScheme.onPrimary
+                                labelColor = if (category == cat) MaterialTheme.colorScheme.onSecondaryContainer
                                 else MaterialTheme.colorScheme.onSurface,
                             )
                         )
@@ -86,6 +98,10 @@ fun AddEventScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
                     onClick = {
                         val database = FirebaseDatabase.getInstance()
                         val ref = database.getReference("events")
