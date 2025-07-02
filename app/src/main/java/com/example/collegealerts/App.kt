@@ -11,7 +11,6 @@ fun App() {
 
     NavHost(navController = navController, startDestination = "splash") {
         composable("splash") { SplashScreen(navController) }
-        composable("login") { LoginScreen(navController) }
         composable("main") { MainScreen(navController) }
         composable("addEvent") { AddEventScreen(navController) }
         composable("details/{eventId}") { backStackEntry ->

@@ -1,11 +1,17 @@
 package com.example.collegealerts.uiux
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.collegealerts.data.Event
+import com.google.firebase.database.FirebaseDatabase
+import java.util.*
 
 @Composable
 fun AddEventScreen(navController: NavController) {
@@ -14,21 +20,90 @@ fun AddEventScreen(navController: NavController) {
     var date by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        TextField(value = title, onValueChange = { title = it }, label = { Text("Title") })
-        Spacer(modifier = Modifier.height(8.dp))
-        TextField(value = description, onValueChange = { description = it }, label = { Text("Description") })
-        Spacer(modifier = Modifier.height(8.dp))
-        TextField(value = date, onValueChange = { date = it }, label = { Text("Date") })
-        Spacer(modifier = Modifier.height(8.dp))
-        TextField(value = category, onValueChange = { category = it }, label = { Text("Category") })
-        Spacer(modifier = Modifier.height(16.dp))
+    val categories = listOf("Seminar", "Exam", "Fest", "Notice")
 
-        Button(onClick = {
-            // Save to Firebase logic here
-            navController.popBackStack()
-        }, modifier = Modifier.fillMaxWidth()) {
-            Text("Save Event")
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            "Create New Event",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            elevation = CardDefaults.cardElevation(4.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Title") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Description") },
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 3
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedTextField(
+                    value = date,
+                    onValueChange = { date = it },
+                    label = { Text("Date (e.g., 2025-08-01)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) }
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text("Select Category:", style = MaterialTheme.typography.titleSmall)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                    categories.forEach { cat ->
+                        AssistChip(
+                            onClick = { category = cat },
+                            label = { Text(cat) },
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = if (category == cat) MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                                else MaterialTheme.colorScheme.surface,
+                                labelColor = if (category == cat) MaterialTheme.colorScheme.onPrimary
+                                else MaterialTheme.colorScheme.onSurface,
+                            )
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = {
+                        val database = FirebaseDatabase.getInstance()
+                        val ref = database.getReference("events")
+                        val eventId = ref.push().key ?: UUID.randomUUID().toString()
+                        val newEvent = Event(eventId, title, description, date, category)
+
+                        ref.child(eventId).setValue(newEvent)
+                            .addOnSuccessListener { navController.popBackStack() }
+                            .addOnFailureListener {
+                                // You can show snackbar or toast if failed
+                            }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = title.isNotBlank() && description.isNotBlank() && date.isNotBlank() && category.isNotBlank()
+                ) {
+                    Text("Save Event")
+                }
+            }
         }
     }
 }

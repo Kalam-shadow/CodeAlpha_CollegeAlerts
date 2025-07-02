@@ -41,26 +41,69 @@ android {
 }
 
 dependencies {
-
+    // AndroidX core essentials
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
+
+    // Compose BOM (single source of truth)
     implementation(platform(libs.androidx.compose.bom))
+
+    // Compose core UI
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.firebase.messaging)
+    debugImplementation(libs.androidx.ui.tooling)
+
+    // Material3
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.ui.graphics)
+
+
+    // Compose Navigation
+    implementation (libs.androidx.navigation.navigation.compose)
     implementation(libs.androidx.navigation.runtime.android)
+    implementation (libs.androidx.navigation.compose)
+
+
+    // Lifecycle support in Compose (ViewModels, etc.)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.runtime.livedata)
+
+
+    // Activity Compose support
+    implementation (libs.androidx.activity.activity.compose)
+
+    // Kotlin coroutines (optional but usually needed)
+    implementation(libs.kotlinx.coroutines.android)
+
+    // Activity support for Compose
+    implementation ( libs.activity.compose)
+
+    // Firebase Messaging
     implementation(libs.firebase.messaging.ktx)
-    implementation(libs.androidx.navigation.compose.jvmstubs)
+    implementation(platform(libs.firebase.bom))
+
+    // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation(libs.firebase.bom)
-    implementation(libs.firebase.analytics)
+    implementation (libs.firebase.database.ktx)
+    implementation (libs.firebase.auth.ktx) // If using auth
+    implementation (libs.google.firebase.messaging.ktx) // For FCM
+
+    implementation (libs.google.firebase.auth.ktx)
+    implementation (libs.play.services.auth)
+
+
 }
+
+
+
+
+
+
+
